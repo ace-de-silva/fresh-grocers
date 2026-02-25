@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fresh Grocers Admin Dashboard — Manage orders, products, and deliveries.">
+  <title>Fresh Grocers — Admin Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-layout">
+
+<!-- ─── Sidebar ──────────────────────────────────────────────── -->
+<aside class="admin-sidebar" id="admin-sidebar" role="navigation" aria-label="Admin navigation">
+  <div class="admin-sidebar__header">
+    <div class="admin-sidebar__brand">
+      <span class="admin-sidebar__brand-icon">🛒</span>
+      <div class="admin-sidebar__brand-text">
+        <div class="admin-sidebar__brand-name">Fresh Grocers</div>
+        <div class="admin-sidebar__brand-sub">Admin Panel</div>
+      </div>
+    </div>
+    <button class="admin-sidebar__close" id="sidebar-close" onclick="AdminApp.closeSidebar()" aria-label="Close sidebar">✕</button>
+  </div>
+
+  <nav class="admin-sidebar__nav">
+    <div class="admin-sidebar__section-label">Overview</div>
+    <button class="admin-sidebar__item admin-sidebar__item--active" id="nav-dashboard" onclick="AdminApp.navigate('dashboard')">
+      <span class="admin-sidebar__item-icon">📊</span> Dashboard
+    </button>
+
+    <div class="admin-sidebar__section-label">Management</div>
+    <button class="admin-sidebar__item" id="nav-orders" onclick="AdminApp.navigate('orders')">
+      <span class="admin-sidebar__item-icon">📦</span> Orders
+      <span class="admin-sidebar__badge" id="sidebar-badge-orders"></span>
+    </button>
+    <button class="admin-sidebar__item" id="nav-assignment" onclick="AdminApp.navigate('assignment')">
+      <span class="admin-sidebar__item-icon">🚚</span> Delivery Assignment
+      <span class="admin-sidebar__badge admin-sidebar__badge--alert" id="sidebar-badge-assign"></span>
+    </button>
+    <button class="admin-sidebar__item" id="nav-products" onclick="AdminApp.navigate('products')">
+      <span class="admin-sidebar__item-icon">🧺</span> Products
+    </button>
+    <button class="admin-sidebar__item" id="nav-customers" onclick="AdminApp.navigate('customers')">
+      <span class="admin-sidebar__item-icon">👥</span> Customers
+    </button>
+    <button class="admin-sidebar__item" id="nav-agents" onclick="AdminApp.navigate('agents')">
+      <span class="admin-sidebar__item-icon">🛵</span> Delivery Agents
+    </button>
+
+    <div class="admin-sidebar__section-label">Insights</div>
+    <button class="admin-sidebar__item" id="nav-analytics" onclick="AdminApp.navigate('analytics')">
+      <span class="admin-sidebar__item-icon">📈</span> Analytics
+    </button>
+  </nav>
+
+  <div class="admin-sidebar__footer">
+    <div class="admin-sidebar__user" id="sidebar-user">
+      <div class="avatar avatar--sm">A</div>
+      <div class="admin-sidebar__user-info">
+        <div class="admin-sidebar__user-name" id="sidebar-admin-name">Admin</div>
+        <div class="admin-sidebar__user-role" id="sidebar-admin-role">SuperAdmin</div>
+      </div>
+    </div>
+    <button class="btn btn--ghost btn--sm" onclick="Auth.logout()" title="Logout" aria-label="Logout">🚪</button>
+  </div>
+</aside>
+
+<!-- ─── Sidebar Overlay (mobile) ────────────────────────────── -->
+<div class="admin-sidebar-overlay" id="sidebar-overlay" onclick="AdminApp.closeSidebar()"></div>
+
+<!-- ─── Main Wrapper ─────────────────────────────────────────── -->
+<div class="admin-main" id="admin-main">
+
+  <!-- Topbar -->
+  <header class="admin-topbar" role="banner">
+    <div class="admin-topbar__left">
+      <button class="admin-topbar__toggle" onclick="AdminApp.openSidebar()" aria-label="Open sidebar">☰</button>
+      <div class="admin-topbar__breadcrumb" id="topbar-breadcrumb">Dashboard</div>
+    </div>
+    <div class="admin-topbar__right">
+      <div class="admin-topbar__time" id="topbar-time"></div>
+      <button class="admin-topbar__icon-btn" onclick="AdminApp.navigate('assignment')" title="Pending assignments" aria-label="Pending assignments">
+        🚚 <span class="admin-topbar__notif" id="topbar-notif"></span>
+      </button>
+      <div class="admin-topbar__user">
+        <div class="avatar avatar--sm" id="topbar-avatar">A</div>
+        <span id="topbar-admin-name">Admin</span>
+      </div>
+      <button class="btn btn--ghost btn--sm" onclick="Auth.logout()" aria-label="Logout">🚪 Logout</button>
+    </div>
+  </header>
+
+  <!-- Content Area -->
+  <div class="admin-content" id="admin-content" aria-live="polite"></div>
+</div>
+
+<!-- ─── Modals ────────────────────────────────────────────────── -->
+
+<!-- Product Form Modal -->
+<div class="modal" id="modal-product-form" aria-modal="true" role="dialog" aria-labelledby="modal-product-form-title">
+  <div class="modal__backdrop" onclick="Utils.hideModal('modal-product-form')"></div>
+  <div class="modal__dialog modal__dialog--lg">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-product-form-title">Add Product</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-product-form')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body">
+      <form id="product-form" onsubmit="AdminApp.saveProduct(event)">
+        <input type="hidden" id="pf-id">
+        <div class="form__row">
+          <div class="form__group">
+            <label class="form__label" for="pf-name">Product Name <span class="form__required">*</span></label>
+            <input class="form__input" type="text" id="pf-name" placeholder="e.g. Organic Bananas" required>
+            <div class="form__error" id="pf-name-error"></div>
+          </div>
+          <div class="form__group">
+            <label class="form__label" for="pf-category">Category <span class="form__required">*</span></label>
+            <select class="form__select" id="pf-category" required>
+              <option value="">Select category</option>
+              <option value="Fruits">Fruits</option>
+              <option value="Vegetables">Vegetables</option>
+              <option value="Dairy">Dairy</option>
+              <option value="Bakery">Bakery</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Snacks">Snacks</option>
+              <option value="Frozen">Frozen</option>
+              <option value="Household">Household</option>
+            </select>
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="form__group">
+            <label class="form__label" for="pf-price">Price (LKR) <span class="form__required">*</span></label>
+            <input class="form__input" type="number" id="pf-price" min="1" step="0.01" placeholder="0.00" required>
+            <div class="form__error" id="pf-price-error"></div>
+          </div>
+          <div class="form__group">
+            <label class="form__label" for="pf-unit">Unit <span class="form__required">*</span></label>
+            <select class="form__select" id="pf-unit" required>
+              <option value="kg">per kg</option>
+              <option value="g">per 500g</option>
+              <option value="each">each</option>
+              <option value="pack">per pack</option>
+              <option value="litre">per litre</option>
+              <option value="bottle">per bottle</option>
+              <option value="box">per box</option>
+              <option value="bunch">per bunch</option>
+              <option value="dozen">per dozen</option>
+            </select>
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="form__group">
+            <label class="form__label" for="pf-stock">Stock Quantity <span class="form__required">*</span></label>
+            <input class="form__input" type="number" id="pf-stock" min="0" placeholder="0" required>
+          </div>
+          <div class="form__group">
+            <label class="form__label" for="pf-emoji">Emoji</label>
+            <input class="form__input" type="text" id="pf-emoji" placeholder="🥦" maxlength="4">
+          </div>
+        </div>
+        <div class="form__group">
+          <label class="form__label" for="pf-description">Description</label>
+          <textarea class="form__textarea" id="pf-description" rows="2" placeholder="Brief product description…"></textarea>
+        </div>
+        <div class="form__group">
+          <label class="form__label">
+            <input type="checkbox" id="pf-featured"> Mark as Featured Product
+          </label>
+        </div>
+      </form>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--outline-gray" onclick="Utils.hideModal('modal-product-form')">Cancel</button>
+      <button class="btn btn--primary" onclick="AdminApp.saveProduct(event)" id="btn-save-product">💾 Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal" id="modal-delete-confirm" aria-modal="true" role="alertdialog" aria-labelledby="modal-delete-title">
+  <div class="modal__backdrop"></div>
+  <div class="modal__dialog modal__dialog--sm">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-delete-title">Confirm Delete</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-delete-confirm')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body">
+      <div class="confirm-delivery">
+        <div class="confirm-delivery__icon">⚠️</div>
+        <div class="confirm-delivery__title" id="delete-confirm-title">Delete this item?</div>
+        <div class="confirm-delivery__desc" id="delete-confirm-desc">This action cannot be undone.</div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--outline-gray" onclick="Utils.hideModal('modal-delete-confirm')">Cancel</button>
+      <button class="btn btn--danger" id="btn-confirm-delete">🗑 Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="modal" id="modal-order-detail" aria-modal="true" role="dialog" aria-labelledby="modal-order-detail-title">
+  <div class="modal__backdrop" onclick="Utils.hideModal('modal-order-detail')"></div>
+  <div class="modal__dialog modal__dialog--lg">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-order-detail-title">Order Details</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-order-detail')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body" id="modal-order-detail-body"></div>
+  </div>
+</div>
+
+<!-- Agent Form Modal -->
+<div class="modal" id="modal-agent-form" aria-modal="true" role="dialog" aria-labelledby="modal-agent-form-title">
+  <div class="modal__backdrop" onclick="Utils.hideModal('modal-agent-form')"></div>
+  <div class="modal__dialog modal__dialog--lg">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-agent-form-title">Add Delivery Agent</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-agent-form')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body">
+      <form id="agent-form" onsubmit="return false;">
+        <input type="hidden" id="af-id">
+        <div class="form__row">
+          <div class="form__group">
+            <label class="form__label" for="af-name">Full Name <span class="form__required">*</span></label>
+            <input class="form__input" type="text" id="af-name" placeholder="Agent full name" required>
+            <div class="form__error" id="af-name-error"></div>
+          </div>
+          <div class="form__group">
+            <label class="form__label" for="af-email">Email <span class="form__required">*</span></label>
+            <input class="form__input" type="email" id="af-email" placeholder="agent@freshgrocers.lk" required>
+            <div class="form__error" id="af-email-error"></div>
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="form__group">
+            <label class="form__label" for="af-phone">Phone <span class="form__required">*</span></label>
+            <input class="form__input" type="tel" id="af-phone" placeholder="07X XXX XXXX" required>
+          </div>
+          <div class="form__group">
+            <label class="form__label" for="af-vehicle">Vehicle Number</label>
+            <input class="form__input" type="text" id="af-vehicle" placeholder="WP AB-1234">
+          </div>
+        </div>
+        <div class="form__row">
+          <div class="form__group">
+            <label class="form__label" for="af-area">Area <span class="form__required">*</span></label>
+            <select class="form__select" id="af-area" required>
+              <option value="">Select area</option>
+              <option value="Colombo">Colombo</option>
+              <option value="Dehiwala">Dehiwala</option>
+              <option value="Moratuwa">Moratuwa</option>
+              <option value="Sri Jayawardenepura">Sri Jayawardenepura</option>
+              <option value="Nugegoda">Nugegoda</option>
+              <option value="Maharagama">Maharagama</option>
+              <option value="Boralesgamuwa">Boralesgamuwa</option>
+              <option value="Piliyandala">Piliyandala</option>
+              <option value="Kelaniya">Kelaniya</option>
+              <option value="Kaduwela">Kaduwela</option>
+              <option value="Negombo">Negombo</option>
+              <option value="Gampaha">Gampaha</option>
+              <option value="Kandy">Kandy</option>
+              <option value="Galle">Galle</option>
+              <option value="Matara">Matara</option>
+            </select>
+          </div>
+          <div class="form__group">
+            <label class="form__label" for="af-password">Initial Password <span class="form__required">*</span></label>
+            <input class="form__input" type="password" id="af-password" placeholder="Min 6 characters" required>
+            <div class="form__error" id="af-password-error"></div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--outline-gray" onclick="Utils.hideModal('modal-agent-form')">Cancel</button>
+      <button class="btn btn--primary" onclick="AdminApp.saveAgent()">💾 Save Agent</button>
+    </div>
+  </div>
+</div>
+
+<!-- Assignment Confirmation Modal -->
+<div class="modal" id="modal-assign-confirm" aria-modal="true" role="alertdialog" aria-labelledby="modal-assign-title">
+  <div class="modal__backdrop"></div>
+  <div class="modal__dialog modal__dialog--sm">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-assign-title">Confirm Assignment</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-assign-confirm')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body" id="modal-assign-body">
+      <div class="confirm-delivery">
+        <div class="confirm-delivery__icon">🚚</div>
+        <div class="confirm-delivery__title" id="assign-confirm-title">Assign delivery agent?</div>
+        <div class="confirm-delivery__desc" id="assign-confirm-desc">This will notify the agent and customer via SMS.</div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--outline-gray" onclick="Utils.hideModal('modal-assign-confirm')">Cancel</button>
+      <button class="btn btn--success" id="btn-confirm-assign">✅ Confirm Assignment</button>
+    </div>
+  </div>
+</div>
+
+<!-- CSR Quick Order Modal -->
+<div class="modal" id="modal-quick-order" aria-modal="true" role="dialog" aria-labelledby="modal-qo-title">
+  <div class="modal__backdrop" onclick="Utils.hideModal('modal-quick-order')"></div>
+  <div class="modal__dialog modal__dialog--lg">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-qo-title">📞 CSR Quick Order</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-quick-order')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body" id="modal-qo-body"></div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Scripts -->
+<script src="data/sample-data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/database.js"></script>
+<script src="js/assignment-algorithm.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/admin.js"></script>
+<script>
+  DB.init();
+  AdminApp.init();
+</script>
+</body>
+</html>

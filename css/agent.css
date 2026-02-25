@@ -1,0 +1,465 @@
+/* ============================================================
+   Fresh Grocers — Delivery Agent Portal Stylesheet
+   ============================================================ */
+
+/* ─── Agent Nav ───────────────────────────────────────────── */
+.agent-nav {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  background: var(--blue-dark);
+  height: var(--nav-h);
+  box-shadow: var(--shadow-md);
+}
+
+.agent-nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 var(--space-5);
+  max-width: var(--container-max);
+  margin: 0 auto;
+}
+
+.agent-nav__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.agent-nav__logo {
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.agent-nav__title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: white;
+}
+
+.agent-nav__title span { color: #a8e6bc; }
+
+.agent-nav__links {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.agent-nav__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 0.4rem 0.875rem;
+  border-radius: var(--radius);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: var(--transition-fast);
+  font-family: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.agent-nav__link:hover { background: rgba(255,255,255,.1); color: white; }
+.agent-nav__link--active { background: rgba(255,255,255,.15); color: white; }
+.agent-nav__link-icon { font-size: 1.2rem; }
+
+.agent-nav__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ─── Status Toggle ───────────────────────────────────────── */
+.status-toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.status-toggle-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.8);
+}
+
+.status-toggle {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.status-toggle input { opacity: 0; width: 0; height: 0; }
+
+.status-toggle__track {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.2);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.status-toggle input:checked + .status-toggle__track { background: var(--primary); }
+
+.status-toggle__track::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.status-toggle input:checked + .status-toggle__track::before { transform: translateX(24px); }
+
+/* ─── Agent Layout ────────────────────────────────────────── */
+.agent-body {
+  min-height: calc(100vh - var(--nav-h));
+  padding: var(--space-5) 0;
+  background: var(--gray-50);
+}
+
+.agent-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+/* ─── Agent Dashboard ─────────────────────────────────────── */
+.agent-status-banner {
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+  transition: var(--transition);
+}
+
+.agent-status-banner--online {
+  background: linear-gradient(135deg, var(--success-bg), var(--primary-light));
+  border: 2px solid var(--success);
+}
+
+.agent-status-banner--offline {
+  background: var(--gray-100);
+  border: 2px solid var(--gray-300);
+}
+
+.agent-status-banner__icon { font-size: 2.5rem; }
+
+.agent-status-banner__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.agent-status-banner--online .agent-status-banner__title { color: var(--success); }
+
+.agent-status-banner__desc { font-size: 0.875rem; color: var(--text-muted); margin-top: 3px; }
+
+/* Today's Stats Grid */
+.agent-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+@media (max-width: 576px) { .agent-stats { grid-template-columns: repeat(2, 1fr); } }
+
+.agent-stat {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  text-align: center;
+  border: 1px solid var(--gray-200);
+}
+
+.agent-stat__value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  color: var(--gray-900);
+  line-height: 1.2;
+}
+
+.agent-stat__label { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
+.agent-stat__icon  { font-size: 1.5rem; margin-bottom: var(--space-2); }
+
+/* ─── Delivery Cards ──────────────────────────────────────── */
+.delivery-section {
+  margin-bottom: var(--space-5);
+}
+
+.delivery-section__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: var(--space-3);
+}
+
+.delivery-section__badge {
+  background: var(--danger);
+  color: white;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 7px;
+}
+
+.delivery-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+  margin-bottom: var(--space-3);
+  transition: var(--transition);
+}
+
+.delivery-card--urgent { border-left: 4px solid var(--danger); }
+.delivery-card--transit { border-left: 4px solid var(--secondary); }
+.delivery-card--done   { border-left: 4px solid var(--success); opacity: 0.8; }
+
+.delivery-card:hover { box-shadow: var(--shadow); }
+
+.delivery-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.delivery-card__order-id {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--blue-dark);
+}
+
+.delivery-card__body { padding: var(--space-4); }
+
+.delivery-card__address {
+  display: flex;
+  gap: var(--space-2);
+  font-size: 0.9rem;
+  color: var(--gray-700);
+  margin-bottom: var(--space-3);
+}
+
+.delivery-card__address-icon { flex-shrink: 0; color: var(--danger); }
+
+.delivery-card__customer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--gray-50);
+  border-radius: var(--radius);
+  margin-bottom: var(--space-3);
+}
+
+.delivery-card__customer-info { flex: 1; }
+.delivery-card__customer-name { font-weight: 600; font-size: 0.875rem; }
+.delivery-card__customer-phone { font-size: 0.8rem; color: var(--text-muted); }
+
+.delivery-card__phone-btn {
+  width: 34px;
+  height: 34px;
+  background: var(--success);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.delivery-card__phone-btn:hover { background: var(--success); transform: scale(1.1); color: white; }
+
+.delivery-card__items {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.delivery-card__footer {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.delivery-card__payment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  background: var(--warning-bg);
+  color: var(--warning);
+  border-radius: var(--radius-sm);
+}
+
+/* ─── Performance Section ─────────────────────────────────── */
+.perf-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+@media (max-width: 480px) { .perf-grid { grid-template-columns: 1fr; } }
+
+.perf-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  border: 1px solid var(--gray-200);
+  text-align: center;
+}
+
+.perf-card__value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  color: var(--primary);
+  line-height: 1.1;
+}
+
+.perf-card__label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: var(--space-2);
+}
+
+/* Rating display */
+.rating-large {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.rating-large__num {
+  font-size: 3rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  color: var(--gray-900);
+  line-height: 1;
+}
+
+.rating-large__stars { font-size: 1.5rem; }
+.rating-large__count { font-size: 0.8rem; color: var(--text-muted); }
+
+/* Location selector */
+.location-select-wrap {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+/* ─── Confirm Delivery Modal ──────────────────────────────── */
+.confirm-delivery {
+  text-align: center;
+  padding: var(--space-4) 0;
+}
+
+.confirm-delivery__icon { font-size: 4rem; margin-bottom: var(--space-3); }
+.confirm-delivery__title { font-size: 1.25rem; font-weight: 700; margin-bottom: var(--space-2); }
+.confirm-delivery__desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--space-4); }
+
+/* ─── Agent Feedback ──────────────────────────────────────── */
+.feedback-item {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.feedback-item:last-child { border-bottom: none; }
+
+.feedback-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.feedback-item__customer { font-weight: 600; font-size: 0.875rem; }
+.feedback-item__date     { font-size: 0.78rem; color: var(--text-muted); }
+.feedback-item__comment  { font-size: 0.875rem; color: var(--gray-700); font-style: italic; }
+
+/* ─── Bottom nav (mobile) ─────────────────────────────────── */
+.agent-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--blue-dark);
+  z-index: 600;
+  box-shadow: 0 -4px 12px rgba(0,0,0,.15);
+}
+
+.agent-bottom-nav__items {
+  display: flex;
+  height: 60px;
+}
+
+.agent-bottom-nav__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: rgba(255,255,255,.6);
+  font-size: 0.65rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  transition: var(--transition-fast);
+}
+
+.agent-bottom-nav__item--active { color: white; }
+.agent-bottom-nav__item:hover   { color: rgba(255,255,255,.9); }
+.agent-bottom-nav__item-icon    { font-size: 1.25rem; }
+
+@media (max-width: 576px) {
+  .agent-bottom-nav { display: block; }
+  .agent-nav__links { display: none; }
+  .agent-body { padding-bottom: 70px; }
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fresh Grocers Delivery Agent Portal — Manage your deliveries.">
+  <title>Fresh Grocers — Agent Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/agent.css">
+</head>
+<body>
+
+<!-- ─── Agent Navigation ────────────────────────────────────── -->
+<header class="agent-nav" role="banner">
+  <div class="agent-nav__inner">
+    <div class="agent-nav__brand">
+      <div class="agent-nav__logo">🚚</div>
+      <div class="agent-nav__title">Fresh <span>Grocers</span> Agent</div>
+    </div>
+
+    <nav class="agent-nav__links" aria-label="Agent navigation">
+      <button class="agent-nav__link agent-nav__link--active" id="nav-dashboard" onclick="AgentApp.navigate('dashboard')">
+        <span class="agent-nav__link-icon">📊</span> Dashboard
+      </button>
+      <button class="agent-nav__link" id="nav-deliveries" onclick="AgentApp.navigate('deliveries')">
+        <span class="agent-nav__link-icon">📦</span> Deliveries
+      </button>
+      <button class="agent-nav__link" id="nav-performance" onclick="AgentApp.navigate('performance')">
+        <span class="agent-nav__link-icon">⭐</span> Performance
+      </button>
+    </nav>
+
+    <div class="agent-nav__right">
+      <!-- Online/Offline Toggle -->
+      <div class="status-toggle-wrap">
+        <span class="status-toggle-label" id="status-label">Offline</span>
+        <label class="status-toggle" aria-label="Toggle availability status">
+          <input type="checkbox" id="status-toggle" onchange="AgentApp.toggleStatus(this.checked)">
+          <span class="status-toggle__track"></span>
+        </label>
+      </div>
+      <!-- Agent Avatar -->
+      <div class="avatar" id="nav-avatar" style="cursor:default;" title="Your profile">A</div>
+      <button class="btn btn--ghost btn--sm" style="color:rgba(255,255,255,.7);" onclick="Auth.logout()" aria-label="Logout">🚪</button>
+    </div>
+  </div>
+</header>
+
+<!-- ─── Main Content ─────────────────────────────────────────── -->
+<main class="agent-body" role="main">
+  <div class="agent-content" id="agent-content" aria-live="polite"></div>
+</main>
+
+<!-- ─── Mobile Bottom Nav ────────────────────────────────────── -->
+<nav class="agent-bottom-nav" aria-label="Mobile navigation">
+  <div class="agent-bottom-nav__items">
+    <button class="agent-bottom-nav__item agent-bottom-nav__item--active" id="mob-dashboard" onclick="AgentApp.navigate('dashboard')">
+      <span class="agent-bottom-nav__item-icon">📊</span> Dashboard
+    </button>
+    <button class="agent-bottom-nav__item" id="mob-deliveries" onclick="AgentApp.navigate('deliveries')">
+      <span class="agent-bottom-nav__item-icon">📦</span> Deliveries
+    </button>
+    <button class="agent-bottom-nav__item" id="mob-performance" onclick="AgentApp.navigate('performance')">
+      <span class="agent-bottom-nav__item-icon">⭐</span> Performance
+    </button>
+  </div>
+</nav>
+
+<!-- ─── Modals ────────────────────────────────────────────────── -->
+
+<!-- Confirm Delivery Modal -->
+<div class="modal" id="modal-delivered" aria-modal="true" role="alertdialog" aria-labelledby="modal-delivered-title">
+  <div class="modal__backdrop"></div>
+  <div class="modal__dialog modal__dialog--sm">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-delivered-title">Confirm Delivery</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-delivered')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body">
+      <div class="confirm-delivery">
+        <div class="confirm-delivery__icon">✅</div>
+        <div class="confirm-delivery__title">Mark as Delivered?</div>
+        <div class="confirm-delivery__desc">Please confirm the customer received their order.</div>
+        <div class="form__group" style="text-align:left;">
+          <label class="form__label" for="signature-input">Customer Signature / Name</label>
+          <input class="form__input" type="text" id="signature-input" placeholder="Customer's name or signature" aria-required="true">
+        </div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--outline-gray" onclick="Utils.hideModal('modal-delivered')">Cancel</button>
+      <button class="btn btn--primary" id="btn-confirm-delivered">✅ Confirm Delivery</button>
+    </div>
+  </div>
+</div>
+
+<!-- Location Update Modal -->
+<div class="modal" id="modal-location" aria-modal="true" role="dialog" aria-labelledby="modal-location-title">
+  <div class="modal__backdrop" onclick="Utils.hideModal('modal-location')"></div>
+  <div class="modal__dialog modal__dialog--sm">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-location-title">📍 Update Location</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-location')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body" id="modal-location-body"></div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- Scripts -->
+<script src="data/sample-data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/database.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/agent.js"></script>
+<script>
+  DB.init();
+  AgentApp.init();
+</script>
+</body>
+</html>

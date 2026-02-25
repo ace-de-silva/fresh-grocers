@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fresh Grocers Customer Portal — Browse and order fresh groceries online.">
+  <title>Fresh Grocers — Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/customer.css">
+</head>
+<body>
+
+<!-- ─── Navigation ─────────────────────────────────────────── -->
+<header class="cust-nav" role="banner">
+  <div class="cust-nav__inner">
+    <a href="#" class="cust-nav__logo" onclick="CustomerApp.navigate('home'); return false;" aria-label="Fresh Grocers Home">
+      <div class="cust-nav__logo-icon">🛒</div>
+      <div class="cust-nav__logo-text">Fresh <span>Grocers</span></div>
+    </a>
+
+    <!-- Search -->
+    <div class="cust-nav__search">
+      <div class="search-bar" role="search">
+        <input class="search-bar__input" type="search" id="nav-search" placeholder="Search groceries…" aria-label="Search products" autocomplete="off">
+        <button class="search-bar__btn" onclick="CustomerApp.handleNavSearch()" aria-label="Search">🔍</button>
+      </div>
+    </div>
+
+    <!-- Nav Links -->
+    <nav class="cust-nav__links" aria-label="Main navigation">
+      <button class="cust-nav__link" onclick="CustomerApp.navigate('home')" id="nav-home" aria-label="Home">🏠 Home</button>
+      <button class="cust-nav__link" onclick="CustomerApp.navigate('products')" id="nav-products" aria-label="Shop">🛍 Shop</button>
+      <button class="cust-nav__link" onclick="CustomerApp.navigate('orders')" id="nav-orders" aria-label="My Orders">📦 Orders</button>
+    </nav>
+
+    <!-- Cart -->
+    <button class="cust-nav__cart" onclick="CustomerApp.navigate('cart')" aria-label="Shopping cart">
+      🛒
+      <span class="cust-nav__cart-badge" id="cart-badge" aria-label="Items in cart">0</span>
+    </button>
+
+    <!-- User Menu -->
+    <div class="cust-nav__user">
+      <button class="cust-nav__user-btn" onclick="CustomerApp.toggleUserMenu()" aria-haspopup="true" aria-expanded="false" id="user-menu-btn">
+        <span class="avatar" id="nav-avatar">U</span>
+        <span class="cust-nav__user-name" id="nav-username">User</span>
+        <span>▾</span>
+      </button>
+      <div class="cust-nav__dropdown" id="user-dropdown" aria-label="User menu">
+        <button class="cust-nav__dropdown-item" onclick="CustomerApp.navigate('profile'); CustomerApp.closeUserMenu()">👤 My Profile</button>
+        <button class="cust-nav__dropdown-item" onclick="CustomerApp.navigate('orders'); CustomerApp.closeUserMenu()">📦 My Orders</button>
+        <div class="cust-nav__dropdown-divider"></div>
+        <button class="cust-nav__dropdown-item cust-nav__dropdown-item--danger" onclick="Auth.logout()">🚪 Logout</button>
+      </div>
+    </div>
+
+    <!-- Mobile Toggle -->
+    <button class="cust-nav__toggle" onclick="CustomerApp.toggleMobileMenu()" aria-label="Open menu">☰</button>
+  </div>
+</header>
+
+<!-- ─── Mobile Slide-In Menu ───────────────────────────────── -->
+<div id="mobile-menu" style="display:none; position:fixed; inset:0; z-index:800; background:rgba(0,0,0,.5);" onclick="CustomerApp.closeMobileMenu()">
+  <nav style="position:absolute;top:0;left:0;width:280px;height:100vh;background:white;padding:1.5rem;box-shadow:var(--shadow-xl);overflow-y:auto;" onclick="e=>e.stopPropagation()">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+      <strong style="font-family:var(--font-heading);font-size:1.1rem;">🛒 Fresh Grocers</strong>
+      <button onclick="CustomerApp.closeMobileMenu()" style="background:var(--gray-100);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;font-size:1rem;">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0.5rem;">
+      <button class="cust-nav__link" style="justify-content:flex-start;" onclick="CustomerApp.navigate('home'); CustomerApp.closeMobileMenu()">🏠 Home</button>
+      <button class="cust-nav__link" style="justify-content:flex-start;" onclick="CustomerApp.navigate('products'); CustomerApp.closeMobileMenu()">🛍 Shop</button>
+      <button class="cust-nav__link" style="justify-content:flex-start;" onclick="CustomerApp.navigate('cart'); CustomerApp.closeMobileMenu()">🛒 Cart</button>
+      <button class="cust-nav__link" style="justify-content:flex-start;" onclick="CustomerApp.navigate('orders'); CustomerApp.closeMobileMenu()">📦 Orders</button>
+      <button class="cust-nav__link" style="justify-content:flex-start;" onclick="CustomerApp.navigate('profile'); CustomerApp.closeMobileMenu()">👤 Profile</button>
+      <div class="divider"></div>
+      <button class="cust-nav__link" style="justify-content:flex-start;color:var(--danger);" onclick="Auth.logout()">🚪 Logout</button>
+    </div>
+  </nav>
+</div>
+
+<!-- ─── Main SPA Content ────────────────────────────────────── -->
+<main id="main-content" role="main" aria-live="polite"></main>
+
+<!-- ─── Toast Container ─────────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<!-- ─── Modals ──────────────────────────────────────────────── -->
+
+<!-- Product Detail Modal -->
+<div class="modal" id="modal-product" aria-modal="true" aria-labelledby="modal-product-title" role="dialog">
+  <div class="modal__backdrop" onclick="Utils.hideModal('modal-product')"></div>
+  <div class="modal__dialog modal__dialog--lg">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-product-title">Product Details</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-product')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body" id="modal-product-body"></div>
+  </div>
+</div>
+
+<!-- Feedback Modal -->
+<div class="modal" id="modal-feedback" aria-modal="true" aria-labelledby="modal-feedback-title" role="dialog">
+  <div class="modal__backdrop" onclick="Utils.hideModal('modal-feedback')"></div>
+  <div class="modal__dialog modal__dialog--sm">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-feedback-title">Rate Your Delivery</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-feedback')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body" id="modal-feedback-body"></div>
+  </div>
+</div>
+
+<!-- Cart Remove Confirm -->
+<div class="modal" id="modal-remove-confirm" aria-modal="true" aria-labelledby="modal-remove-title" role="alertdialog">
+  <div class="modal__backdrop" onclick="Utils.hideModal('modal-remove-confirm')"></div>
+  <div class="modal__dialog modal__dialog--sm">
+    <div class="modal__header">
+      <h2 class="modal__title" id="modal-remove-title">Remove Item?</h2>
+      <button class="modal__close" onclick="Utils.hideModal('modal-remove-confirm')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal__body">
+      <p>Are you sure you want to remove this item from your cart?</p>
+    </div>
+    <div class="modal__footer">
+      <button class="btn btn--outline-gray" onclick="Utils.hideModal('modal-remove-confirm')">Cancel</button>
+      <button class="btn btn--danger" id="btn-confirm-remove">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="data/sample-data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/database.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/customer.js"></script>
+<script>
+  DB.init();
+  CustomerApp.init();
+</script>
+</body>
+</html>

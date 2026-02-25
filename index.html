@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fresh Grocers — Sri Lanka's premier grocery delivery service. Order fresh produce, dairy, bakery and household items online.">
+  <meta name="author" content="Fresh Grocers Digital Team">
+  <title>Fresh Grocers — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    body { background: linear-gradient(135deg, #003D82 0%, #0d5c2e 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+    .login-page { width: 100%; max-width: 480px; animation: slideUp .4s ease; }
+
+    /* Logo */
+    .login-logo { text-align: center; margin-bottom: 2rem; }
+    .login-logo__icon { width: 68px; height: 68px; background: var(--primary); border-radius: var(--radius-xl); display: inline-flex; align-items: center; justify-content: center; font-size: 2.2rem; margin-bottom: 1rem; box-shadow: 0 8px 24px rgba(40,167,69,.4); }
+    .login-logo__name { font-family: var(--font-heading); font-weight: 700; font-size: 1.75rem; color: white; }
+    .login-logo__name span { color: #a8e6bc; }
+    .login-logo__tagline { color: rgba(255,255,255,.7); font-size: 0.9rem; margin-top: 0.25rem; }
+
+    /* Card */
+    .login-card { background: white; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); overflow: hidden; }
+
+    /* Role Tabs */
+    .role-tabs { display: flex; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+    .role-tab { flex: 1; padding: 0.9rem 0.5rem; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.78rem; font-weight: 600; font-family: var(--font-heading); color: var(--text-muted); cursor: pointer; border: none; background: none; transition: var(--transition-fast); border-bottom: 3px solid transparent; margin-bottom: -1px; }
+    .role-tab:hover { color: var(--primary); background: var(--primary-light); }
+    .role-tab.active { color: var(--primary); background: white; border-bottom-color: var(--primary); }
+    .role-tab__icon { font-size: 1.2rem; }
+
+    /* Form area */
+    .auth-forms { padding: 2rem; }
+
+    /* Auth mode toggle */
+    .auth-toggle { display: flex; background: var(--gray-100); border-radius: var(--radius-pill); padding: 3px; margin-bottom: 1.5rem; }
+    .auth-toggle__btn { flex: 1; padding: 0.5rem; border-radius: var(--radius-pill); font-size: 0.85rem; font-weight: 600; font-family: var(--font-heading); cursor: pointer; border: none; background: none; color: var(--text-muted); transition: var(--transition-fast); }
+    .auth-toggle__btn.active { background: white; color: var(--primary); box-shadow: var(--shadow-sm); }
+
+    /* Form */
+    .auth-form { display: none; }
+    .auth-form.active { display: block; }
+
+    /* Forgot password link */
+    .forgot-link { font-size: 0.8rem; color: var(--primary); float: right; text-decoration: none; font-weight: 500; }
+    .forgot-link:hover { text-decoration: underline; }
+
+    /* Demo credentials hint */
+    .demo-hint { background: var(--info-bg); border: 1px solid rgba(13,110,253,.2); border-radius: var(--radius); padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: #084298; }
+    .demo-hint strong { font-weight: 700; display: block; margin-bottom: 0.25rem; }
+    .demo-hint code { background: rgba(13,110,253,.08); padding: 0.1rem 0.35rem; border-radius: 3px; font-family: var(--font-mono); font-size: 0.78rem; }
+
+    /* Register areas selector */
+    .areas-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+    .area-option { border: 1.5px solid var(--gray-300); border-radius: var(--radius); padding: 0.5rem; text-align: center; font-size: 0.78rem; cursor: pointer; transition: var(--transition-fast); }
+    .area-option input { display: none; }
+    .area-option:hover, .area-option.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); font-weight: 600; }
+
+    .footer-note { text-align: center; color: rgba(255,255,255,.5); font-size: 0.75rem; margin-top: 1.5rem; }
+    .footer-note a { color: rgba(255,255,255,.7); }
+
+    @media (max-width: 480px) { .auth-forms { padding: 1.5rem; } }
+  </style>
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-logo">
+    <div class="login-logo__icon">🛒</div>
+    <div class="login-logo__name">Fresh <span>Grocers</span></div>
+    <div class="login-logo__tagline">Sri Lanka's Freshest Grocery Delivery</div>
+  </div>
+
+  <div class="login-card">
+    <!-- Role Tabs -->
+    <div class="role-tabs" role="tablist" aria-label="Select account type">
+      <button class="role-tab active" role="tab" aria-selected="true" data-role="customer" onclick="switchRole('customer')">
+        <span class="role-tab__icon">🛒</span> Customer
+      </button>
+      <button class="role-tab" role="tab" aria-selected="false" data-role="agent" onclick="switchRole('agent')">
+        <span class="role-tab__icon">🚚</span> Delivery Agent
+      </button>
+      <button class="role-tab" role="tab" aria-selected="false" data-role="admin" onclick="switchRole('admin')">
+        <span class="role-tab__icon">👨‍💼</span> Admin / CSR
+      </button>
+    </div>
+
+    <div class="auth-forms">
+      <!-- Auth Toggle (Customer only) -->
+      <div id="auth-toggle-wrap" class="auth-toggle" role="group" aria-label="Login or Register">
+        <button class="auth-toggle__btn active" onclick="switchAuthMode('login')" id="btn-login">Login</button>
+        <button class="auth-toggle__btn" onclick="switchAuthMode('register')" id="btn-register">Register</button>
+      </div>
+
+      <!-- Demo Hint -->
+      <div class="demo-hint" id="demo-hint">
+        <strong>🎯 Demo Credentials</strong>
+        <span id="demo-text">Email: <code>demo.customer@freshgrocers.lk</code> &nbsp; Password: <code>customer123</code></span>
+      </div>
+
+      <!-- ── Login Form ── -->
+      <form class="auth-form active" id="form-login" novalidate>
+        <div class="form__group">
+          <label class="form__label" for="login-email">Email Address <span>*</span></label>
+          <input class="form__input" type="email" id="login-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="form__group">
+          <label class="form__label" for="login-password">
+            Password <span>*</span>
+            <a href="#" class="forgot-link" onclick="handleForgotPassword(event)">Forgot?</a>
+          </label>
+          <input class="form__input" type="password" id="login-password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <div class="form__group">
+          <label class="form__check">
+            <input type="checkbox" id="remember-me">
+            <span class="form__check-label">Remember me on this device</span>
+          </label>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full btn--lg" id="btn-login-submit">
+          Sign In
+        </button>
+      </form>
+
+      <!-- ── Register Form (Customer only) ── -->
+      <form class="auth-form" id="form-register" novalidate>
+        <div class="form__row">
+          <div class="form__group">
+            <label class="form__label" for="reg-name">Full Name <span>*</span></label>
+            <input class="form__input" type="text" id="reg-name" placeholder="Kasun Perera" autocomplete="name" required>
+          </div>
+          <div class="form__group">
+            <label class="form__label" for="reg-phone">Phone Number <span>*</span></label>
+            <input class="form__input" type="tel" id="reg-phone" placeholder="+94771234567" autocomplete="tel">
+          </div>
+        </div>
+        <div class="form__group">
+          <label class="form__label" for="reg-email">Email Address <span>*</span></label>
+          <input class="form__input" type="email" id="reg-email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="form__group">
+          <label class="form__label" for="reg-address">Delivery Address <span>*</span></label>
+          <input class="form__input" type="text" id="reg-address" placeholder="123, Galle Road, Colombo 03" autocomplete="street-address" required>
+        </div>
+        <div class="form__group">
+          <label class="form__label" for="reg-area">Delivery Area <span>*</span></label>
+          <select class="form__select" id="reg-area">
+            <option value="Colombo 1" data-postal="00100">Colombo 1</option>
+            <option value="Colombo 2" data-postal="00200">Colombo 2</option>
+            <option value="Colombo 3" data-postal="00300">Colombo 3 (Fort)</option>
+            <option value="Colombo 4" data-postal="00400">Colombo 4 (Bambalapitiya)</option>
+            <option value="Colombo 5" data-postal="00500" selected>Colombo 5 (Havelock)</option>
+            <option value="Colombo 6" data-postal="00600">Colombo 6 (Wellawatte)</option>
+            <option value="Colombo 7" data-postal="00700">Colombo 7 (Cinnamon Gardens)</option>
+            <option value="Colombo 10" data-postal="01000">Colombo 10 (Maradana)</option>
+            <option value="Colombo 12" data-postal="01200">Colombo 12 (Pettah)</option>
+            <option value="Colombo 15" data-postal="01500">Colombo 15 (Modara)</option>
+            <option value="Nugegoda" data-postal="10250">Nugegoda</option>
+            <option value="Dehiwala" data-postal="10350">Dehiwala</option>
+            <option value="Ratmalana" data-postal="10390">Ratmalana</option>
+            <option value="Moratuwa" data-postal="10400">Moratuwa</option>
+            <option value="Gampaha" data-postal="11000">Gampaha</option>
+            <option value="Negombo" data-postal="11500">Negombo</option>
+            <option value="Kandy" data-postal="20000">Kandy</option>
+            <option value="Galle" data-postal="80000">Galle</option>
+          </select>
+        </div>
+        <div class="form__row">
+          <div class="form__group">
+            <label class="form__label" for="reg-password">Password <span>*</span></label>
+            <input class="form__input" type="password" id="reg-password" placeholder="Min. 6 characters" autocomplete="new-password" required>
+          </div>
+          <div class="form__group">
+            <label class="form__label" for="reg-confirm">Confirm Password <span>*</span></label>
+            <input class="form__input" type="password" id="reg-confirm" placeholder="Repeat password" autocomplete="new-password" required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn--primary btn--full btn--lg" id="btn-register-submit">
+          Create Account
+        </button>
+      </form>
+
+    </div><!-- /auth-forms -->
+  </div><!-- /login-card -->
+
+  <p class="footer-note">
+    &copy; 2025 Fresh Grocers (Pvt) Ltd. Sri Lanka &mdash; <a href="#">Privacy Policy</a>
+  </p>
+</div>
+
+<div id="toast-container"></div>
+
+<!-- Scripts -->
+<script src="data/sample-data.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/database.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  // ─── Initialise DB ─────────────────────────────────────────
+  DB.init();
+  Auth.redirectIfLoggedIn(); // redirect if already logged in
+
+  // ─── State ─────────────────────────────────────────────────
+  let currentRole = 'customer';
+  let currentAuthMode = 'login';
+
+  const DEMOS = {
+    customer: { email: 'demo.customer@freshgrocers.lk', pw: 'customer123', text: 'Email: <code>demo.customer@freshgrocers.lk</code> &nbsp; Password: <code>customer123</code>' },
+    agent:    { email: 'demo.agent@freshgrocers.lk',    pw: 'agent123',    text: 'Email: <code>demo.agent@freshgrocers.lk</code> &nbsp; Password: <code>agent123</code>' },
+    admin:    { email: 'admin@freshgrocers.lk',         pw: 'admin123',    text: 'Email: <code>admin@freshgrocers.lk</code> &nbsp; Password: <code>admin123</code>' }
+  };
+
+  // ─── Role switching ─────────────────────────────────────────
+  function switchRole(role) {
+    currentRole = role;
+
+    document.querySelectorAll('.role-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.role === role);
+      t.setAttribute('aria-selected', t.dataset.role === role);
+    });
+
+    const toggleWrap = document.getElementById('auth-toggle-wrap');
+    toggleWrap.style.display = role === 'customer' ? '' : 'none';
+
+    if (role !== 'customer') {
+      switchAuthMode('login');
+      document.getElementById('form-register').classList.remove('active');
+      document.getElementById('form-login').classList.add('active');
+    }
+
+    const demo = DEMOS[role];
+    document.getElementById('demo-text').innerHTML = demo.text;
+    document.getElementById('login-email').value = demo.email;
+    document.getElementById('login-password').value = demo.pw;
+    Utils.clearAllFormErrors(document.getElementById('form-login'));
+  }
+
+  // ─── Auth mode switching ────────────────────────────────────
+  function switchAuthMode(mode) {
+    currentAuthMode = mode;
+    document.getElementById('btn-login').classList.toggle('active', mode === 'login');
+    document.getElementById('btn-register').classList.toggle('active', mode === 'register');
+    document.getElementById('form-login').classList.toggle('active', mode === 'login');
+    document.getElementById('form-register').classList.toggle('active', mode === 'register');
+    document.getElementById('demo-hint').style.display = mode === 'login' ? '' : 'none';
+    Utils.clearAllFormErrors(document.getElementById('form-' + mode));
+  }
+
+  // ─── Login Submit ───────────────────────────────────────────
+  document.getElementById('form-login').addEventListener('submit', function(e) {
+    e.preventDefault();
+    Utils.clearAllFormErrors(this);
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const remember = document.getElementById('remember-me').checked;
+
+    const btn = document.getElementById('btn-login-submit');
+    Utils.setLoading(btn, true);
+
+    setTimeout(() => {
+      const result = Auth.login(email, password, remember);
+      Utils.setLoading(btn, false);
+
+      if (!result.success) {
+        Utils.showFormError(document.getElementById('login-email'), result.error);
+        Utils.showToast(result.error, 'error');
+        return;
+      }
+
+      Utils.showToast(`Welcome back, ${result.user.name}! 👋`, 'success');
+      const routes = { customer: 'customer.html', agent: 'agent.html', admin: 'admin.html' };
+
+      setTimeout(() => { window.location.href = routes[result.role]; }, 600);
+    }, 400);
+  });
+
+  // ─── Register Submit ────────────────────────────────────────
+  document.getElementById('form-register').addEventListener('submit', function(e) {
+    e.preventDefault();
+    Utils.clearAllFormErrors(this);
+
+    const name     = document.getElementById('reg-name').value;
+    const phone    = document.getElementById('reg-phone').value;
+    const email    = document.getElementById('reg-email').value;
+    const address  = document.getElementById('reg-address').value;
+    const areaEl   = document.getElementById('reg-area');
+    const area     = areaEl.value;
+    const postal   = areaEl.options[areaEl.selectedIndex].dataset.postal;
+    const password = document.getElementById('reg-password').value;
+    const confirm  = document.getElementById('reg-confirm').value;
+
+    if (password !== confirm) {
+      Utils.showFormError(document.getElementById('reg-confirm'), 'Passwords do not match.');
+      return;
+    }
+
+    const btn = document.getElementById('btn-register-submit');
+    Utils.setLoading(btn, true);
+
+    setTimeout(() => {
+      const result = Auth.registerCustomer({ name, phone, email, address, area, postalCode: postal, password });
+      Utils.setLoading(btn, false);
+
+      if (!result.success) {
+        const fieldMap = { name: 'reg-name', email: 'reg-email', phone: 'reg-phone', address: 'reg-address', password: 'reg-password' };
+        if (result.field && fieldMap[result.field]) {
+          Utils.showFormError(document.getElementById(fieldMap[result.field]), result.error);
+        }
+        Utils.showToast(result.error, 'error');
+        return;
+      }
+
+      Utils.showToast(`Account created! Welcome, ${result.user.name}!`, 'success');
+      setTimeout(() => { window.location.href = 'customer.html'; }, 600);
+    }, 500);
+  });
+
+  // ─── Forgot Password ────────────────────────────────────────
+  function handleForgotPassword(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    if (!email) { Utils.showToast('Enter your email address first.', 'warning'); return; }
+    Utils.showToast(`Password reset link sent to ${email} (simulated).`, 'info', 5000);
+  }
+
+  // ─── Keyboard shortcut: "/" focuses email ──────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+      e.preventDefault();
+      document.getElementById('login-email').focus();
+    }
+  });
+</script>
+</body>
+</html>
